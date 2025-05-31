@@ -1,5 +1,9 @@
 package uap.models;
 import uap.bases.shape;
+import uap.interfaces.MassCalculable;
+import uap.interfaces.MassConverter;
+import uap.interfaces.PiRequired;
+import uap.interfaces.ShippingCostCalculator;
 public class torus extends shape{
     private double majorRadius;
     private double minorRadius;
@@ -19,15 +23,15 @@ public class torus extends shape{
     }
 
     public double getVolume(){
-        return (2 * Math.PI * Math.PI * majorRadius * minorRadius * minorRadius);
+        return (2 * PiRequired.PI * PiRequired.PI * majorRadius * minorRadius * minorRadius);
     }
 
     public double getSurfaceArea(){
-        return (4 * Math.PI * Math.PI * majorRadius * minorRadius);
+        return (4 * PiRequired.PI * PiRequired.PI * majorRadius * minorRadius);
     }
 
     public double getMass(){
-        return (getVolume());
+        return MassCalculable.DENSITY * getSurfaceArea() * MassCalculable.THICKNESS;
     }
 
     @Override
@@ -36,16 +40,17 @@ public class torus extends shape{
         System.out.println("Volume: " + getVolume());
         System.out.println("massa: " + getMass());
         System.out.println("massa dalam kilogram: " + gramToKilogram(getMass()));
-        System.out.println("Biaya pengiriman: " + calculateCost());
+        System.out.println("Biaya pengiriman: Rp" + calculateCost());
     }
 
     public double gramToKilogram(double grams) {
-        return grams / 1000.0;
+        return grams / MassConverter.DENOMINATOR;
     }
 
     public double calculateCost(){
-        double costPerKilogram = 10.0; // Example cost per kilogram
+        double costPerKilogram = ShippingCostCalculator.PRICE_PER_KG; // Example cost per kilogram
         double massInKilograms = gramToKilogram(getMass());
-        return massInKilograms * costPerKilogram;
+        double hasil = massInKilograms * costPerKilogram;
+        return Math.ceil(hasil/1000) * 1000; 
     }
 }
